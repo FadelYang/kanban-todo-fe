@@ -11,18 +11,22 @@ const url = getUrl();
 type BoardProps = {
   board: BoardType;
   tasks: Task[];
-  fetchBoard: () => {};
-  fetchTask: () => {};
+  fetchBoard: () => Promise<void>;
+  fetchTask: () => Promise<void>;
 };
 
 export const Board = ({ board, tasks, fetchBoard, fetchTask }: BoardProps) => {
   const [isCreateTaskModalOpen, setIsCreateTaskModalOpen] = useState(false);
+  const [isUpdateBoardModalOpen, setIsUpdateBoardModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorResponse, setErrorResponse] = useState<any>({});
 
   // create new task
   const [taskName, setTaskName] = useState("");
   const [taskDescription, setTaskDescription] = useState("");
+
+  // update board
+  const [boardName, setBoardName] = useState("");
 
   const { setNodeRef } = useDroppable({
     id: board.id,
@@ -45,11 +49,38 @@ export const Board = ({ board, tasks, fetchBoard, fetchTask }: BoardProps) => {
         return;
       }
 
-      fetchBoard();
+      await fetchBoard();
     } catch (error: any) {
       alert(error?.message);
       return;
     }
+  };
+
+  const handleUpdateBoard = async (boardId: number, e: FormEvent) => {
+    try {
+      e.preventDefault();
+      setIsLoading(true);
+      const response: any = await fetch(`${url}/boards/${boardId}`, {
+        method: "PUT",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: boardName }),
+      });
+
+      const json = response.json()
+
+      if (!response.ok) {
+        alert("Failed add a new board");
+        setErrorResponse(json.message);
+        setIsLoading(false);
+        return;
+      }
+
+      setIsUpdateBoardModalOpen(false);
+      await fetchBoard();
+      setBoardName("");
+      setIsLoading(false)
+    } catch (error) {}
   };
 
   const handleAddNewTask = async (boardId: number, e: FormEvent) => {
@@ -72,7 +103,7 @@ export const Board = ({ board, tasks, fetchBoard, fetchTask }: BoardProps) => {
         return;
       }
 
-      fetchTask();
+      await fetchTask();
       setIsLoading(false);
       setIsCreateTaskModalOpen(false);
       setTaskName("");
@@ -98,7 +129,10 @@ export const Board = ({ board, tasks, fetchBoard, fetchTask }: BoardProps) => {
             >
               <Plus size={20} color="#51a2ff" />
             </button>
-            <button className="hover:cursor-pointer">
+            <button className="hover:cursor-pointer" type='button' onClick={() => {
+              setBoardName(board.name);
+              setIsUpdateBoardModalOpen(true);
+            }}>
               <Pencil size={18} color="#c27aff" />
             </button>
             <button
@@ -166,6 +200,44 @@ export const Board = ({ board, tasks, fetchBoard, fetchTask }: BoardProps) => {
                   type="submit"
                 >
                   {isLoading ? "Add New Task..." : "Add New Task"}
+                </button>
+              </div>
+            </form>
+          </>
+        </BaseModal>
+      )}
+
+      {isUpdateBoardModalOpen && (
+        <BaseModal
+          isOpen={isUpdateBoardModalOpen}
+          setIsOpen={setIsUpdateBoardModalOpen}
+          title={"Add New Board"}
+        >
+          <>
+            <form
+              className="flex flex-col gap-2"
+              onSubmit={(e) => handleUpdateBoard(board.id, e)}
+            >
+              <div className="flex flex-col gap-1">
+                <label htmlFor="boardName">Board Name</label>
+                <input
+                  type="text"
+                  id="boardName"
+                  className="border rounded p-2 "
+                  onChange={(e) => setBoardName(e.target.value)}
+                  value={boardName}
+                  required
+                />
+              </div>
+              {errorResponse && (
+                <p className="text-red-500">{errorResponse.message}</p>
+              )}
+              <div>
+                <button
+                  className="bg-black hover:cursor-pointer hover:bg-gray-800 text-white rounded py-2 px-4 mt-1"
+                  type="submit"
+                >
+                  {isLoading ? "Add New Board..." : "Add New Board"}
                 </button>
               </div>
             </form>

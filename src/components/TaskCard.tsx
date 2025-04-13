@@ -9,7 +9,7 @@ const url = getUrl();
 
 type TaskCardProps = {
   task: Task;
-  fetchTask: () => {};
+  fetchTask: () => Promise<void>;
 };
 
 type UpdateTaskBody = {
@@ -51,7 +51,7 @@ export const TaskCard = ({ task, fetchTask }: TaskCardProps) => {
         return;
       }
 
-      fetchTask();
+      await fetchTask();
     } catch (error: any) {
       alert(error?.message);
       return;
@@ -78,7 +78,7 @@ export const TaskCard = ({ task, fetchTask }: TaskCardProps) => {
         return;
       }
 
-      fetchTask();
+      await fetchTask();
       setIsLoading(false);
       setIsUpdateTaskModalOpen(false);
       setTaskName("");
