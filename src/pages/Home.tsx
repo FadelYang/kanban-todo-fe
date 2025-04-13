@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { getUrl } from "../utils/getBackEndUrl";
 import { Board as BoardType, Task } from "../types";
 import { Board } from "../components/Board";
@@ -12,6 +12,11 @@ const Home = () => {
   const [boards, setBoards] = useState<BoardType[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isCreateBoardModalOpen, setIsCreateBoardModalOpen] = useState(false);
+  const [errorResponse, setErrorResponse] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  // new board data
+  const [boardName, setBoardName] = useState("");
 
   const fetchBoards = async () => {
     const response = await fetch(`${url}/boards`, {
@@ -42,6 +47,36 @@ const Home = () => {
     if (!response.ok) {
       alert("Failed to update task status");
       return;
+    }
+  };
+
+  const handleCreateBoard = async (e: FormEvent) => {
+    try {
+      e.preventDefault()
+      setIsLoading(true);
+      const response = await fetch(`${url}/boards`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: boardName }),
+      });
+
+      const json = await response.json();
+
+      if (!response.ok) {
+        alert("Failed add a new board");
+        setErrorResponse(json.message);
+        setIsLoading(false);
+        return;
+      }
+      
+      setIsCreateBoardModalOpen(false);
+      await fetchBoards();
+      setBoardName("");
+      setIsLoading(false)
+    } catch (error) {
+      setIsLoading(false);
+      console.error(error);
     }
   };
 
@@ -97,12 +132,37 @@ const Home = () => {
           })}
         </DndContext>
       </div>
+
+      {/* create board modal */}
       {isCreateBoardModalOpen && (
         <BaseModal
           isOpen={isCreateBoardModalOpen}
           setIsOpen={setIsCreateBoardModalOpen}
         >
-          <p>Halo</p>
+          <>
+            <form className="flex flex-col gap-2" onSubmit={(e) => handleCreateBoard(e)}>
+              <div className="flex flex-col gap-1">
+                <label htmlFor="boardName">Board Name</label>
+                <input
+                  type="text"
+                  id="boardName"
+                  className="border rounded p-2 "
+                  onChange={(e) => setBoardName(e.target.value)}
+                  value={boardName}
+                  required
+                />
+              </div>
+              {errorResponse && <p className="text-red-500">{errorResponse}</p>}
+              <div>
+                <button
+                  className="bg-black hover:cursor-pointer hover:bg-gray-800 text-white rounded py-2 px-4 mt-1"
+                  type="submit"
+                >
+                  {isLoading ? "Add New Board..." : "Add New Board"}
+                </button>
+              </div>
+            </form>
+          </>
         </BaseModal>
       )}
     </div>
