@@ -1,18 +1,15 @@
 import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPasswrod] = useState("");
-  const { login } = useAuth();
-  const navigate = useNavigate();
+  const { login, error } = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       await login(email, password);
-      navigate("/dashboard", { replace: true });
     } catch (error) {
       console.error(error);
     }
@@ -45,6 +42,11 @@ const Login = () => {
               required
             />
           </div>
+          {error && (
+            <p className="text-red-500">
+              {error === "Record not found" ? "User not found" : error}
+            </p>
+          )}
           <button
             className="bg-black hover:cursor-pointer hover:bg-gray-800 text-white rounded py-2 px-4 mt-1"
             type="submit"
