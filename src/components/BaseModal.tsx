@@ -8,7 +8,7 @@ type BaseModalProps = {
   title: string;
 };
 
-export const BaseModal = ({ children, isOpen, setIsOpen }: BaseModalProps) => {
+export const BaseModal = ({ children, isOpen, setIsOpen, title }: BaseModalProps) => {
   return (
     isOpen && (
       <>
@@ -16,9 +16,9 @@ export const BaseModal = ({ children, isOpen, setIsOpen }: BaseModalProps) => {
         <div className="fixed inset-0 z-30 flex flex-col items-center justify-center">
           <div className={`bg-white rounded-lg shadow p-6 min-w-80`}>
             <div className="flex justify-between mb-5">
-              <h3 className="font-semibold">Add New Board</h3>
+              <h3 className="font-semibold">{title}</h3>
               <button
-                className="cursor-pointer"
+                className="cursor-pointer ml-10"
                 type="button"
                 onClick={() => setIsOpen(false)}
               >

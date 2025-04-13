@@ -76,6 +76,7 @@ const Home = () => {
       setIsLoading(false)
     } catch (error) {
       setIsLoading(false);
+      alert("Something error: " + error)
       console.error(error);
     }
   };
@@ -117,7 +118,7 @@ const Home = () => {
           </button>
         </div>
       </div>
-      <div className="flex gap-2 flex-wrap">
+      <div className="flex gap-2 flex-wrap items-start">
         <DndContext onDragEnd={handleDragEnd}>
           {boards.map((board) => {
             return (
