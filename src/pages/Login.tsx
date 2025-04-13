@@ -5,29 +5,11 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPasswrod] = useState("");
 
-  const handleLogin = async () => {
-    const url = getUrl();
-    try {
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password
-        })
-      });
-    } catch (error) {
-      
-    }
-  };
-
   return (
     <div className="flex flex-col justify-center items-center h-screen gap-5">
       <h1 className="text-3xl text-center">Login</h1>
       <div className="flex flex-col gap-2 border rounded px-5 py-2">
-        <form className="flex flex-col gap-2" onSubmit={handleLogin}>
+        <form className="flex flex-col gap-2">
           <div className="flex flex-col gap-1">
             <label htmlFor="email">Email</label>
             <input
