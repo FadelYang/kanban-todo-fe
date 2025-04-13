@@ -7,8 +7,8 @@ import { ProtectedRoute } from "./components/ProtctedRoute";
 
 function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
+    <BrowserRouter>
+      <AuthProvider>
         <Routes>
           <Route path="/login" element={<Login />}></Route>
           <Route
@@ -19,10 +19,10 @@ function App() {
               </ProtectedRoute>
             }
           ></Route>
-          <Route path='*' element={"error 404, page not found"}></Route>
+          <Route path="*" element={"error 404, page not found"}></Route>
         </Routes>
-      </BrowserRouter>
-    </AuthProvider>
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
 

@@ -13,19 +13,23 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [accessToken, setAccessToken] = useState<string | null>(null);
 
   const login = async (email: string, password: string) => {
-    const response = await fetch(`${url}/login`, {
-      method: "POST",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
+    try {
+      const response = await fetch(`${url}/auth/login`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
-    const accessToken = await response.json();
-    setAccessToken(accessToken);
+      const accessToken = await response.json();
+      setAccessToken(accessToken);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const logout = async () => {
-    await fetch(`${url}/logout`, {
+    await fetch(`${url}/auth/logout`, {
       method: "POST",
       credentials: "include",
     });
