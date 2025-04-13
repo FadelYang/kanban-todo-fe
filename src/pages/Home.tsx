@@ -138,6 +138,7 @@ const Home = () => {
         <BaseModal
           isOpen={isCreateBoardModalOpen}
           setIsOpen={setIsCreateBoardModalOpen}
+          title={"Add New Board"}
         >
           <>
             <form className="flex flex-col gap-2" onSubmit={(e) => handleCreateBoard(e)}>

@@ -1,7 +1,7 @@
 import { useDroppable } from "@dnd-kit/core";
 import { Board as BoardType, Task } from "../types";
 import { TaskCard } from "./TaskCard";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Plus, Trash2 } from "lucide-react";
 import { getUrl } from "../utils/getBackEndUrl";
 import { FormEvent } from "react";
 
@@ -10,8 +10,8 @@ const url = getUrl();
 type BoardProps = {
   board: BoardType;
   tasks: Task[];
-  fetchBoard: () => {}
-  fetchTask: () => {}
+  fetchBoard: () => {};
+  fetchTask: () => {};
 };
 
 export const Board = ({ board, tasks, fetchBoard, fetchTask }: BoardProps) => {
@@ -29,7 +29,7 @@ export const Board = ({ board, tasks, fetchBoard, fetchTask }: BoardProps) => {
         credentials: "include",
       });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (!response.ok) {
         alert(data?.message);
@@ -49,6 +49,9 @@ export const Board = ({ board, tasks, fetchBoard, fetchTask }: BoardProps) => {
         <h2 className="font-semibold text-neutral-100">{board.name}</h2>
         <div className="flex justify-end gap-3 text-purp">
           <button className="hover:cursor-pointer">
+            <Plus size={20} color="#51a2ff" />
+          </button>
+          <button className="hover:cursor-pointer">
             <Pencil size={18} color="#c27aff" />
           </button>
           <button
@@ -62,7 +65,7 @@ export const Board = ({ board, tasks, fetchBoard, fetchTask }: BoardProps) => {
       </div>
       <div ref={setNodeRef} className="flex flex-1 flex-col gap-4">
         {tasks.map((task) => {
-          return <TaskCard key={task.id} task={task} fetchTask={fetchTask}/>;
+          return <TaskCard key={task.id} task={task} fetchTask={fetchTask} />;
         })}
       </div>
     </div>
