@@ -75,6 +75,7 @@ const Home = () => {
                 key={board.id}
                 board={board}
                 tasks={tasks.filter((task) => task.board_id === board.id)}
+                fetchBoard={fetchBoards}
               />
             );
           })}
