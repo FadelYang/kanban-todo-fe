@@ -1,5 +1,6 @@
 import { useDraggable } from "@dnd-kit/core";
 import { Task } from "../types";
+import { Pencil, Trash2 } from 'lucide-react';
 
 type TaskCardProps = {
   task: Task;
@@ -29,6 +30,14 @@ export const TaskCard = ({ task }: TaskCardProps) => {
       <p className="mt-2 text-sm text-neutral-400">
         {new Date(task.created_at).toISOString()}
       </p>
+      <div className='flex gap-3 mt-5'>
+        <button className='hover:cursor-pointer'>
+          <Pencil size={18} color='#c27aff'/>
+        </button>
+        <button className='hover:cursor-pointer'>
+          <Trash2 size={18} color='#ff6467'/>
+        </button>
+      </div>
     </div>
   );
 };
