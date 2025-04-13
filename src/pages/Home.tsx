@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { getUrl } from "../utils/getBackEndUrl";
 import { Board as BoardType, Task } from "../types";
-import { Board } from '../components/Board';
+import { Board } from "../components/Board";
+import { DndContext, DragEndEvent } from "@dnd-kit/core";
 
 const url = getUrl();
 
@@ -27,6 +28,38 @@ const Home = () => {
     setTasks(data.data);
   };
 
+  const updateTaskStatus = async (taskId: number, newStatus: number) => {
+    const response = await fetch(`${url}/tasks/${taskId}/status`, {
+      method: "PUT",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ board_id: newStatus }),
+    });
+
+    if (!response.ok) {
+      alert("Failed to update task status");
+      return;
+    }
+  };
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over) return;
+    const taskId = active.id as string;
+    const newStatus = over.id as Task["board_id"];
+    await updateTaskStatus(+taskId, newStatus);
+    setTasks(() =>
+      tasks.map((task) =>
+        task.id === +taskId
+          ? {
+              ...task,
+              board_id: newStatus,
+            }
+          : task
+      )
+    );
+  };
+
   useEffect(() => {
     fetchBoards();
     fetchTasks();
@@ -35,6 +68,7 @@ const Home = () => {
   return (
     <div className="p-4">
       <div className="flex gap-2 flex-wrap">
+        <DndContext onDragEnd={handleDragEnd}>
           {boards.map((board) => {
             return (
               <Board
@@ -44,6 +78,7 @@ const Home = () => {
               />
             );
           })}
+        </DndContext>
       </div>
     </div>
   );
