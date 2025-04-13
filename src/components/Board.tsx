@@ -11,9 +11,10 @@ type BoardProps = {
   board: BoardType;
   tasks: Task[];
   fetchBoard: () => {}
+  fetchTask: () => {}
 };
 
-export const Board = ({ board, tasks, fetchBoard }: BoardProps) => {
+export const Board = ({ board, tasks, fetchBoard, fetchTask }: BoardProps) => {
   const { setNodeRef } = useDroppable({
     id: board.id,
   });
@@ -61,7 +62,7 @@ export const Board = ({ board, tasks, fetchBoard }: BoardProps) => {
       </div>
       <div ref={setNodeRef} className="flex flex-1 flex-col gap-4">
         {tasks.map((task) => {
-          return <TaskCard key={task.id} task={task} />;
+          return <TaskCard key={task.id} task={task} fetchTask={fetchTask}/>;
         })}
       </div>
     </div>
