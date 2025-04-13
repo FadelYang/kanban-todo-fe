@@ -1,6 +1,6 @@
 import { ReactNode, createContext, useContext, useState } from "react";
 import { getUrl } from "../utils/getBackEndUrl";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext<any>(null);
 
@@ -11,12 +11,13 @@ type AuthProviderProps = {
 };
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [accessToken, setAccessToken] = useState<string | null>(null);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const login = async (email: string, password: string) => {
     try {
+      setIsLoading(true);
       const response = await fetch(`${url}/auth/login`, {
         method: "POST",
         credentials: "include",
@@ -27,15 +28,16 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       const json = await response.json();
 
       if (!response.ok) {
-        console.error({response: json?.message});
-        setError(json.message)
+        console.error({ response: json?.message });
+        setError(json.message);
+        setIsLoading(false);
         return;
       }
 
-      const accessToken = await response.json();
-      setAccessToken(accessToken);
+      setIsLoading(false);
       navigate("/dashboard", { replace: true });
     } catch (error) {
+      setIsLoading(false);
       console.error(error);
     }
   };
@@ -45,11 +47,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       method: "POST",
       credentials: "include",
     });
-    setAccessToken(null);
   };
 
   return (
-    <AuthContext.Provider value={{ accessToken, login, logout, error }}>
+    <AuthContext.Provider
+      value={{ login, logout, error, isLoading }}
+    >
       {children}
     </AuthContext.Provider>
   );

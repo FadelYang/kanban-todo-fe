@@ -1,14 +1,27 @@
-import { Navigate } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
-import { JSX } from 'react';
+import { JSX, useEffect, useState } from 'react';
+import { Navigate } from 'react-router-dom';
 
-type ProtectedRouteProps = {
-  children: JSX.Element
-}
+export const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
-export const ProtectedRoute = ({children}: ProtectedRouteProps) => {
-  const { accessToken } = useAuth();
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const res = await fetch("http://localhost:3001/api/v1/auth/check", {
+          credentials: "include",
+        });
+        setIsAuthenticated(res.ok);
+      } catch (err) {
+        setIsAuthenticated(false);
+      }
+    };
 
-  if (!accessToken) return <Navigate to={"/login"} replace />
-  return children
-}
+    checkAuth();
+  }, []);
+
+  if (isAuthenticated === null) return <div>Loading...</div>;
+
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
+
+  return children;
+};

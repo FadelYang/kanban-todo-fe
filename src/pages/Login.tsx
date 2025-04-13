@@ -4,7 +4,7 @@ import { useAuth } from "../contexts/AuthContext";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPasswrod] = useState("");
-  const { login, error } = useAuth();
+  const { login, error, isLoading } = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,7 +19,7 @@ const Login = () => {
     <div className="flex flex-col justify-center items-center h-screen gap-5">
       <h1 className="text-3xl text-center">Login</h1>
       <div className="flex flex-col gap-2 border rounded px-5 py-2">
-        <form className="flex flex-col gap-2" onSubmit={(e) => handleLogin(e)}>
+        <form className="flex flex-col gap-2">
           <div className="flex flex-col gap-1">
             <label htmlFor="email">Email</label>
             <input
@@ -49,9 +49,10 @@ const Login = () => {
           )}
           <button
             className="bg-black hover:cursor-pointer hover:bg-gray-800 text-white rounded py-2 px-4 mt-1"
-            type="submit"
+            type="button"
+            onClick={(e) => handleLogin(e)}
           >
-            Login
+            {isLoading ? "Login..." : "Login"}
           </button>
           <p className="text-center">
             <a href="#" className="underline">
