@@ -1,1 +1,1 @@
-export const getUrl = () => { return `${import.meta.env.VITE_BACKEND_URL}`; };
+export const getUrl = () => { return `${import.meta.env.VITE_BACKEND_URL}/api/v1`; };
