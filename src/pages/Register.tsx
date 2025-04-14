@@ -33,7 +33,6 @@ const Register = () => {
       /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>\[\]\\\/_\-+=`~]).{8,}$/;
 
     setISPasswordStrong(strongPasswordRule.test(password));
-    console.log({ isPasswordStrong, password });
   }, [password]);
 
   return (
