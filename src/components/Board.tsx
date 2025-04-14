@@ -19,7 +19,7 @@ export const Board = ({ board, tasks, fetchBoard, fetchTask }: BoardProps) => {
   const [isCreateTaskModalOpen, setIsCreateTaskModalOpen] = useState(false);
   const [isUpdateBoardModalOpen, setIsUpdateBoardModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [errorResponse, setErrorResponse] = useState<any>({});
+  const [errorResponse, setErrorResponse] = useState<any>("");
 
   // create new task
   const [taskName, setTaskName] = useState("");
@@ -67,7 +67,7 @@ export const Board = ({ board, tasks, fetchBoard, fetchTask }: BoardProps) => {
         body: JSON.stringify({ name: boardName }),
       });
 
-      const json = response.json()
+      const json = await response.json()
 
       if (!response.ok) {
         alert("Failed add a new board");
@@ -80,7 +80,11 @@ export const Board = ({ board, tasks, fetchBoard, fetchTask }: BoardProps) => {
       await fetchBoard();
       setBoardName("");
       setIsLoading(false)
-    } catch (error) {}
+    } catch (error) {
+      setIsLoading(false);
+      alert("Something error: " + error);
+      console.error(error);
+    }
   };
 
   const handleAddNewTask = async (boardId: number, e: FormEvent) => {
@@ -211,7 +215,7 @@ export const Board = ({ board, tasks, fetchBoard, fetchTask }: BoardProps) => {
         <BaseModal
           isOpen={isUpdateBoardModalOpen}
           setIsOpen={setIsUpdateBoardModalOpen}
-          title={"Add New Board"}
+          title={"Update Board"}
         >
           <>
             <form
@@ -230,14 +234,14 @@ export const Board = ({ board, tasks, fetchBoard, fetchTask }: BoardProps) => {
                 />
               </div>
               {errorResponse && (
-                <p className="text-red-500">{errorResponse.message}</p>
+                <p className="text-red-500">{errorResponse}</p>
               )}
               <div>
                 <button
                   className="bg-black hover:cursor-pointer hover:bg-gray-800 text-white rounded py-2 px-4 mt-1"
                   type="submit"
                 >
-                  {isLoading ? "Add New Board..." : "Add New Board"}
+                  {isLoading ? "Update Board..." : "Update Board"}
                 </button>
               </div>
             </form>
