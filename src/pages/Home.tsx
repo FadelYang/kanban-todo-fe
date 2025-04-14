@@ -5,6 +5,7 @@ import { Board } from "../components/Board";
 import { DndContext, DragEndEvent } from "@dnd-kit/core";
 import { Plus } from "lucide-react";
 import { BaseModal } from "../components/BaseModal";
+import { useNavigate } from 'react-router-dom';
 
 const url = getUrl();
 
@@ -14,6 +15,7 @@ const Home = () => {
   const [isCreateBoardModalOpen, setIsCreateBoardModalOpen] = useState(false);
   const [errorResponse, setErrorResponse] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   // new board data
   const [boardName, setBoardName] = useState("");
@@ -81,6 +83,16 @@ const Home = () => {
     }
   };
 
+  const handleLogout = async () => {
+    const isConfirmed = confirm("Logout?");
+    if (!isConfirmed) return
+    await fetch(`${url}/auth/logout`, {
+      method: "POST",
+      credentials: "include"
+    })
+    navigate("/login");
+  }
+
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over) return;
@@ -108,13 +120,20 @@ const Home = () => {
     <div className="p-4">
       <div className="flex flex-col xl:flex-row justify-between mb-5 gap-3 xl:gap-0">
         <h1 className="text-3xl font-semibold">Your Daily Kanban!</h1>
-        <div>
+        <div className='flex gap-2'>
           <button
-            className="flex gap-2 py-2 px-4 bg-neutral-800 rounded text-white hover:cursor-pointer hover:bg-neutral-950"
+            className="flex flex-row gap-2 py-2 px-4 bg-neutral-800 rounded text-white hover:cursor-pointer hover:bg-neutral-950"
             type="button"
             onClick={() => setIsCreateBoardModalOpen(true)}
           >
             Add New Board <Plus />
+          </button>
+          <button 
+            className="flex gap-2 py-2 px-4  rounded border hover:cursor-pointer "
+            type='button'
+            onClick={() => handleLogout()}
+            >
+              Logout
           </button>
         </div>
       </div>

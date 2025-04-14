@@ -7,6 +7,7 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [checkIsPasswordSame, setCheckIsPasswordSame] = useState(true);
   const { register, multipleError, isLoading } = useAuth();
+  const [isPasswordStrong, setISPasswordStrong] = useState(true);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -14,7 +15,7 @@ const Register = () => {
       await register(email, password);
     } catch (error) {
       console.error(error);
-      alert("Something went wrong" + error)
+      alert("Something went wrong" + error);
     }
   };
 
@@ -23,9 +24,17 @@ const Register = () => {
     if (password !== confirmPassword) {
       setCheckIsPasswordSame(false);
     } else {
-      setCheckIsPasswordSame(true)
+      setCheckIsPasswordSame(true);
     }
   }, [password, confirmPassword]);
+
+  useEffect(() => {
+    const strongPasswordRule =
+      /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>\[\]\\\/_\-+=`~]).{8,}$/;
+
+    setISPasswordStrong(strongPasswordRule.test(password));
+    console.log({ isPasswordStrong, password });
+  }, [password]);
 
   return (
     <div className="flex flex-col justify-center items-center h-screen gap-5">
@@ -46,7 +55,7 @@ const Register = () => {
               required
             />
             {multipleError && (
-              <p className="text-red-500">{multipleError[0]?.message}</p>
+              <p className="text-red-500">{multipleError.message === "Duplicate field value" ? "User with this email already exists" : ""}</p>
             )}
           </div>
           <div className="flex flex-col gap-1">
@@ -62,6 +71,13 @@ const Register = () => {
             {multipleError && (
               <p className="text-red-500">{multipleError[1]?.message}</p>
             )}
+            {!isPasswordStrong && (
+              <p className="text-red-500">
+                {
+                  "Make sure your password contain minimum 1 lower case, 1 uppercase, 1 symbol and minimum 8 character"
+                }
+              </p>
+            )}
           </div>
 
           <div className="flex flex-col gap-1">
@@ -76,9 +92,7 @@ const Register = () => {
             />
           </div>
           {!checkIsPasswordSame && (
-            <p className="text-red-500">
-              {"This password not same"}
-            </p>
+            <p className="text-red-500">{"This password not same"}</p>
           )}
           <button
             className="bg-black hover:cursor-pointer hover:bg-gray-800 text-white rounded py-2 px-4 mt-1"
