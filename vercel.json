@@ -1,6 +1,12 @@
 {
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "https://kanban-todo-be-production.up.railway.app/$1" },
-    { "source": "/(.*)", "destination": "/index.html" }
+    {
+      "source": "/api/v1/(.*)",
+      "destination": "https://kanban-todo-be-production.up.railway.app/api/v1/$1"
+    },
+    {
+      "source": "/((?!api\\/v1).*)",
+      "destination": "/index.html"
+    }
   ]
 }

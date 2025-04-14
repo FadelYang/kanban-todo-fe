@@ -19,6 +19,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const login = async (email: string, password: string) => {
     try {
       setIsLoading(true);
+      console.log("Making request to:", `${url}/auth/login`);
       const response = await fetch(`${url}/auth/login`, {
         method: "POST",
         credentials: "include",
