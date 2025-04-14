@@ -54,7 +54,7 @@ const Login = () => {
             {isLoading ? "Login..." : "Login"}
           </button>
           <p className="text-center">
-            <a href="#" className="underline">
+            <a href="/register" className="underline">
               register
             </a>
           </p>

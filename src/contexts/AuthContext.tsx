@@ -13,6 +13,7 @@ type AuthProviderProps = {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const navigate = useNavigate();
   const [error, setError] = useState("");
+  const [multipleError, setMultipleError] = useState({})
   const [isLoading, setIsLoading] = useState(false);
 
   const login = async (email: string, password: string) => {
@@ -40,7 +41,35 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setIsLoading(false);
       console.error(error);
     }
-  };
+  }
+
+  const register = async (email: string, password: string) => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(`${url}/users/register`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const json = await response.json();
+
+      if (!response.ok) {
+        console.error({ response: json });
+        setMultipleError(json);
+        setIsLoading(false);
+        return;
+      }
+
+      setIsLoading(false);
+      alert("Register success, try lo logged in with your new account")
+      navigate("/login", { replace: true });
+    } catch (error) {
+      setIsLoading(false);
+      console.error(error);
+    }
+  }
 
   const logout = async () => {
     await fetch(`${url}/auth/logout`, {
@@ -51,7 +80,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   return (
     <AuthContext.Provider
-      value={{ login, logout, error, isLoading }}
+      value={{ login, logout, error, isLoading, register, multipleError }}
     >
       {children}
     </AuthContext.Provider>
